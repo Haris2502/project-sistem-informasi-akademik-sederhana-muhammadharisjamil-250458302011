@@ -166,41 +166,61 @@
 
 </div>
 
-{{-- ChartJS Script (Wajib di bagian bawah) --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{{-- ChartJS loaded globally in app.blade.php --}}
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('nilaiChart').getContext('2d');
+    (function() {
+        function initSiswaChart() {
+            const ctx = document.getElementById('nilaiChart');
+            if (!ctx) return;
+            
+            const chartContext = ctx.getContext('2d');
 
-        // Data dari PHP harus di-encode dengan benar
-        const labels = {!! json_encode(array_keys($chartData ?? [])) !!};
-        const dataValues = {!! json_encode(array_values($chartData ?? [])) !!};
-
-        const chart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Nilai Akhir',
-                    data: dataValues,
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false, // Penting untuk layout
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: { stepSize: 10 }
-                    },
-                    x: { grid: { display: false } }
-                },
-                plugins: { legend: { display: false } }
+            // Destroy old chart if exists
+            if (window.siswaChart) {
+                try {
+                    window.siswaChart.destroy();
+                } catch (e) {}
             }
+
+            // Data dari PHP harus di-encode dengan benar
+            const labels = {!! json_encode(array_keys($chartData ?? [])) !!};
+            const dataValues = {!! json_encode(array_values($chartData ?? [])) !!};
+
+            window.siswaChart = new Chart(chartContext, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Nilai Akhir',
+                        data: dataValues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Penting untuk layout
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { stepSize: 10 }
+                        },
+                        x: { grid: { display: false } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // Run immediately with small delay to ensure Chart.js is loaded
+        setTimeout(initSiswaChart, 50);
+
+        // Also run on livewire:navigated
+        document.addEventListener('livewire:navigated', () => {
+            setTimeout(initSiswaChart, 100);
         });
-    });
+    })();
 </script>

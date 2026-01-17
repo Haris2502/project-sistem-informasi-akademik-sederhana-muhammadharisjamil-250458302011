@@ -37,11 +37,11 @@ class Login extends Component
 
             $role = Auth::user()->role;
             if ($role === 'admin') {
-                return redirect()->intended('/admin/dashboard');
+                return $this->redirect('/admin/dashboard', navigate: true);
             } elseif ($role === 'guru') {
-                return redirect()->intended('/guru/dashboard');
+                return $this->redirect('/guru/dashboard', navigate: true);
             } else {
-                return redirect()->intended('/siswa/dashboard');
+                return $this->redirect('/siswa/dashboard', navigate: true);
             }
         }
 

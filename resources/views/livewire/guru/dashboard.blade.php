@@ -132,127 +132,136 @@
     </div>
 </div>
 
-{{-- ===== Chart.js CDN ===== (Tetap di sini) --}}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{{-- ===== Chart.js CDN ===== (Loaded globally) --}}
 
 {{-- ===== SCRIPT GRAFIK (Tanpa Perubahan Logic) ===== --}}
 <script>
-    let chartNilaiInstance, chartKelasInstance, chartDistribusiInstance, chartTrendInstance;
+    (function() {
+        let chartNilaiInstance, chartKelasInstance, chartDistribusiInstance, chartTrendInstance;
 
-    function initCharts() {
+        function initCharts() {
+            // Check if elements exist
+            if (!document.getElementById('chartNilai')) return;
 
-        // Destroy old charts
-        chartNilaiInstance?.destroy();
-        chartKelasInstance?.destroy();
-        chartDistribusiInstance?.destroy();
-        chartTrendInstance?.destroy();
+            // Destroy old charts
+            if (chartNilaiInstance) chartNilaiInstance.destroy();
+            if (chartKelasInstance) chartKelasInstance.destroy();
+            if (chartDistribusiInstance) chartDistribusiInstance.destroy();
+            if (chartTrendInstance) chartTrendInstance.destroy();
 
-        // ---------------------------
-        // GRAFIK 1: Rata-rata Nilai (Bar)
-        // ---------------------------
-        chartNilaiInstance = new Chart(document.getElementById('chartNilai'), {
-            type: 'bar',
-            data: {
-                labels: @json(array_column($chartNilai, 'mapel')),
-                datasets: [{
-                    label: 'Rata-rata Nilai',
-                    data: @json(array_column($chartNilai, 'rata')),
-                    backgroundColor: '#4e73df',
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true, max: 100 }
-                }
-            }
-        });
-
-        // ---------------------------
-        // GRAFIK 2: Siswa per Kelas (Doughnut)
-        // ---------------------------
-        chartKelasInstance = new Chart(document.getElementById('chartKelas'), {
-            type: 'doughnut',
-            data: {
-                labels: @json(array_column($chartKelas, 'kelas')),
-                datasets: [{
-                    data: @json(array_column($chartKelas, 'jumlah')),
-                    backgroundColor: ['#36b9cc', '#f6c23e', '#1cc88a', '#e74a3b', '#6f42c1']
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'right' }
-                }
-            }
-        });
-
-        // ---------------------------
-        // GRAFIK 3: Distribusi Nilai (Horizontal Bar)
-        // ---------------------------
-        chartDistribusiInstance = new Chart(document.getElementById('chartDistribusi'), {
-            type: 'bar',
-            data: {
-                labels: @json(array_column($chartDistribusiNilai, 'range')),
-                datasets: [{
-                    label: 'Jumlah Siswa',
-                    data: @json(array_column($chartDistribusiNilai, 'jumlah')),
-                    backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a'],
-                    borderRadius: 5
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                scales: {
-                    x: { beginAtZero: true }
-                }
-            }
-        });
-
-        // ---------------------------
-        // GRAFIK 4: Trend Nilai (Line)
-        // ---------------------------
-        chartTrendInstance = new Chart(document.getElementById('chartTrend'), {
-            type: 'line',
-            data: {
-                labels: @json(array_column($chartTrendNilai, 'mapel')),
-                datasets: [
-                    {
-                        label: 'Tertinggi',
-                        data: @json(array_column($chartTrendNilai, 'tertinggi')),
-                        borderColor: '#1cc88a',
-                        backgroundColor: 'rgba(28, 200, 138, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Rata-rata',
-                        data: @json(array_column($chartTrendNilai, 'rata')),
-                        borderColor: '#4e73df',
-                        tension: 0.4
-                    },
-                    {
-                        label: 'Terendah',
-                        data: @json(array_column($chartTrendNilai, 'terendah')),
-                        borderColor: '#e74a3b',
-                        tension: 0.4
+            // ---------------------------
+            // GRAFIK 1: Rata-rata Nilai (Bar)
+            // ---------------------------
+            chartNilaiInstance = new Chart(document.getElementById('chartNilai'), {
+                type: 'bar',
+                data: {
+                    labels: @json(array_column($chartNilai, 'mapel')),
+                    datasets: [{
+                        label: 'Rata-rata Nilai',
+                        data: @json(array_column($chartNilai, 'rata')),
+                        backgroundColor: '#4e73df',
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true, max: 100 }
                 }
-            }
-        });
-    }
+            });
 
-    document.addEventListener('DOMContentLoaded', initCharts);
-    document.addEventListener('livewire:navigated', initCharts);
+            // ---------------------------
+            // GRAFIK 2: Siswa per Kelas (Doughnut)
+            // ---------------------------
+            chartKelasInstance = new Chart(document.getElementById('chartKelas'), {
+                type: 'doughnut',
+                data: {
+                    labels: @json(array_column($chartKelas, 'kelas')),
+                    datasets: [{
+                        data: @json(array_column($chartKelas, 'jumlah')),
+                        backgroundColor: ['#36b9cc', '#f6c23e', '#1cc88a', '#e74a3b', '#6f42c1']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+
+            // ---------------------------
+            // GRAFIK 3: Distribusi Nilai (Horizontal Bar)
+            // ---------------------------
+            chartDistribusiInstance = new Chart(document.getElementById('chartDistribusi'), {
+                type: 'bar',
+                data: {
+                    labels: @json(array_column($chartDistribusiNilai, 'range')),
+                    datasets: [{
+                        label: 'Jumlah Siswa',
+                        data: @json(array_column($chartDistribusiNilai, 'jumlah')),
+                        backgroundColor: ['#e74a3b', '#f6c23e', '#36b9cc', '#1cc88a'],
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    scales: {
+                        x: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // ---------------------------
+            // GRAFIK 4: Trend Nilai (Line)
+            // ---------------------------
+            chartTrendInstance = new Chart(document.getElementById('chartTrend'), {
+                type: 'line',
+                data: {
+                    labels: @json(array_column($chartTrendNilai, 'mapel')),
+                    datasets: [
+                        {
+                            label: 'Tertinggi',
+                            data: @json(array_column($chartTrendNilai, 'tertinggi')),
+                            borderColor: '#1cc88a',
+                            backgroundColor: 'rgba(28, 200, 138, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Rata-rata',
+                            data: @json(array_column($chartTrendNilai, 'rata')),
+                            borderColor: '#4e73df',
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Terendah',
+                            data: @json(array_column($chartTrendNilai, 'terendah')),
+                            borderColor: '#e74a3b',
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+
+
+        // Run immediately with small delay to ensure Chart.js is loaded
+        setTimeout(initCharts, 50);
+
+        // Also run on livewire:navigated
+        document.addEventListener('livewire:navigated', () => {
+             setTimeout(initCharts, 100);
+        });
+    })();
 </script>
 
 <style>

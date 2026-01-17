@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" href="{{ asset('dist/assets/compiled/css/iconly.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/nprogress@0.2.0/nprogress.css">
+    <script src="https://unpkg.com/nprogress@0.2.0/nprogress.js"></script>
 </head>
 
 <body>
@@ -36,7 +38,120 @@
     <script src="{{ asset('dist/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('dist/assets/compiled/js/app.js') }}"></script>
     <script src="{{ asset('dist/assets/extensions/apexcharts/apexcharts.min.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{{ asset('dist/assets/static/js/pages/dashboard.js') }}"></script>
+
+    <script>
+        // Dark Mode Handler (Global) - Using event delegation
+        let themeToggleHandler = null;
+        
+        function handleThemeToggle(e) {
+            if (e.target.id === 'toggle-dark') {
+                const newTheme = e.target.checked ? "dark" : "light";
+                document.body.classList.remove('dark', 'light');
+                document.body.classList.add(newTheme);
+                document.documentElement.setAttribute('data-bs-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+        }
+        
+        function initDarkMode() {
+            const theme = localStorage.getItem('theme') || 'light';
+            
+            // Apply theme
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            document.body.classList.remove('dark', 'light');
+            document.body.classList.add(theme);
+            
+            // Update toggle checkbox state
+            const toggler = document.getElementById("toggle-dark");
+            if (toggler) {
+                toggler.checked = theme === "dark";
+            }
+        }
+        
+        // Setup global event listener once (event delegation)
+        if (!themeToggleHandler) {
+            document.addEventListener("input", handleThemeToggle);
+            themeToggleHandler = true;
+        }
+        
+        // Initialize on first load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDarkMode);
+        } else {
+            initDarkMode();
+        }
+    
+        document.addEventListener('livewire:navigating', () => {
+            NProgress.start();
+        });
+
+        document.addEventListener('livewire:navigated', () => {
+            NProgress.done();
+            
+            // Re-init Perfect Scrollbar
+            const container = document.querySelector('.sidebar-wrapper');
+            if (container) {
+                new PerfectScrollbar(container, {
+                    wheelPropagation: false
+                });
+            }
+
+            // Re-init Dark Mode
+            initDarkMode();
+
+            // Re-init Tooltips/Popovers if any (Bootstrap 5)
+            setTimeout(() => {
+                // Dispose old instances first
+                document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                    const oldTooltip = bootstrap.Tooltip.getInstance(el);
+                    if (oldTooltip) oldTooltip.dispose();
+                });
+                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+                var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl)
+                })
+            }, 100);
+        });
+
+
+        // Simple Profile Dropdown Handler (works immediately, no refresh needed)
+        let dropdownInitialized = false;
+        
+        function setupDropdown() {
+            if (dropdownInitialized) return;
+            
+            document.addEventListener('click', function(e) {
+                const toggle = document.getElementById('profileDropdownToggle');
+                const menu = document.getElementById('profileDropdownMenu');
+                
+                if (!toggle || !menu) return;
+                
+                // Click on toggle
+                if (toggle.contains(e.target)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const isOpen = menu.classList.contains('show');
+                    menu.classList.toggle('show', !isOpen);
+                    toggle.setAttribute('aria-expanded', !isOpen);
+                } 
+                // Click outside - close dropdown
+                else if (!menu.contains(e.target)) {
+                    menu.classList.remove('show');
+                    if (toggle) toggle.setAttribute('aria-expanded', 'false');
+                }
+            }, true);
+            
+            dropdownInitialized = true;
+        }
+        
+        // Setup immediately
+        setupDropdown();
+    
+    
+    </script>
 
     @livewireScripts
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -44,59 +44,82 @@
         </div>
     </div>
 
-    {{-- ApexCharts CDN --}}
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    {{-- ApexCharts CDN removed (loaded globally) --}}
 
     <script>
-        document.addEventListener('livewire:load', renderDashboardChart);
-        document.addEventListener('livewire:navigated', renderDashboardChart);
+        (function() {
+            function renderDashboardChart() {
+                const el = document.querySelector("#chartDashboard");
+                if (!el) return;
 
-        function renderDashboardChart() {
-            const el = document.querySelector("#chartDashboard");
-
-            // Hapus chart lama jika ada
-            if (window.dashboardChart) window.dashboardChart.destroy();
-
-            window.dashboardChart = new ApexCharts(el, {
-                chart: {
-                    type: 'bar',
-                    height: 350,
-                    toolbar: { show: false },
-                },
-                plotOptions: {
-                    bar: {
-                        borderRadius: 5,
-                        columnWidth: '50%',
-                        distributed: true,
-                    }
-                },
-                colors: ['#435ebe', '#00a65a', '#f39c12', '#dd4b39'],
-                dataLabels: { enabled: true },
-                series: [{
-                    name: 'Total',
-                    data: @json($chartData),
-                }],
-                xaxis: {
-                    categories: @json($chartLabels),
-                    labels: {
-                        style: { fontSize: '14px', colors: '#333' }
-                    }
-                },
-                yaxis: {
-                    title: { text: 'Jumlah', style: { fontSize: '14px' } }
-                },
-                title: {
-                    text: 'Total Data Siswa, Guru, Kelas, dan Mata Pelajaran',
-                    align: 'center',
-                    style: { fontSize: '16px', color: '#263238' }
-                },
-                grid: {
-                    borderColor: '#f1f1f1'
+                // Hapus chart lama jika ada
+                if (window.dashboardChart) {
+                    try {
+                        window.dashboardChart.destroy();
+                    } catch (e) {}
                 }
-            });
 
-            window.dashboardChart.render();
-        }
+                // Pastikan ApexCharts sudah tersedia
+                if (typeof ApexCharts === 'undefined') {
+                    console.warn('ApexCharts belum dimuat, mencoba lagi...');
+                    setTimeout(renderDashboardChart, 100);
+                    return;
+                }
+
+                window.dashboardChart = new ApexCharts(el, {
+                    chart: {
+                        type: 'bar',
+                        height: 350,
+                        toolbar: { show: false },
+                    },
+                    plotOptions: {
+                        bar: {
+                            borderRadius: 5,
+                            columnWidth: '50%',
+                            distributed: true,
+                        }
+                    },
+                    colors: ['#435ebe', '#00a65a', '#f39c12', '#dd4b39'],
+                    dataLabels: { enabled: true },
+                    series: [{
+                        name: 'Total',
+                        data: @json($chartData),
+                    }],
+                    xaxis: {
+                        categories: @json($chartLabels),
+                        labels: {
+                            style: { fontSize: '14px', colors: '#333' }
+                        }
+                    },
+                    yaxis: {
+                        title: { text: 'Jumlah', style: { fontSize: '14px' } }
+                    },
+                    title: {
+                        text: 'Total Data Siswa, Guru, Kelas, dan Mata Pelajaran',
+                        align: 'center',
+                        style: { fontSize: '16px', color: '#263238' }
+                    },
+                    grid: {
+                        borderColor: '#f1f1f1'
+                    }
+                });
+
+                window.dashboardChart.render();
+            }
+
+            // Run on DOMContentLoaded untuk first load
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', renderDashboardChart);
+            } else {
+                // DOM sudah ready, render langsung
+                renderDashboardChart();
+            }
+            
+            // Also run on livewire:navigated untuk navigasi SPA
+            document.addEventListener('livewire:navigated', () => {
+                setTimeout(renderDashboardChart, 100);
+            });
+        })();
     </script>
 </div>
 </div>

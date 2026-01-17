@@ -41,8 +41,8 @@
                 </div>
 
                 <div class="hidden md:block">
-                    <a href="{{ route('register') }}" class="text-black px-6 py-2 rounded-lg hover:bg-sky-600 transition">Daftar</a>
-                    <a href="{{ route('login') }}" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition">Masuk</a>
+                    <a href="{{ route('register') }}" class="text-black px-6 py-2 rounded-lg hover:bg-sky-600 transition" wire:navigate>Daftar</a>
+                    <a href="{{ route('login') }}" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition" wire:navigate>Masuk</a>
                 </div>
 
                 <!-- Mobile menu button -->
@@ -61,7 +61,7 @@
                 <a href="#about" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">About</a>
                 <a href="#features" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Features</a>
                 <a href="#story" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Story</a>
-                <a href="#pricing" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Pricing</a> <a href="{{ route('register') }}" class="block px-3 py-2 bg-primary text-white rounded text-center">Register</a>
+                <a href="#pricing" class="block px-3 py-2 text-gray-700 hover:bg-gray-100 rounded">Pricing</a> <a href="{{ route('register') }}" class="block px-3 py-2 bg-primary text-white rounded text-center" wire:navigate>Register</a>
             </div>
         </div>
     </nav>

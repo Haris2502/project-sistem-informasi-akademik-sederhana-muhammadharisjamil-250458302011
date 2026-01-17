@@ -1,9 +1,9 @@
 <header class="mb-3 d-flex align-items-center shadow-sm bg-light px-3 py-2 rounded-3 ">
 
     <!-- Burger Button -->
-    <a href="#" class="burger-btn d-block d-xl-none text-dark">
+    <button class="burger-btn d-block d-xl-none text-dark">
         <i class="bi bi-list fs-2"></i>
-    </a>
+    </button>
 
     @php
         $user = Auth::user();
@@ -23,9 +23,9 @@
     <!-- Profile Dropdown -->
     <div class="dropdown ms-auto">
         <a
-            href="#"
+            href=""
+            id="profileDropdownToggle"
             class="d-flex align-items-center text-decoration-none"
-            data-bs-toggle="dropdown"
             aria-expanded="false"
             style="cursor: pointer;"
         >
@@ -53,26 +53,26 @@
             </div>
         </a>
 
-        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3" id="profileDropdownMenu">
 
             <!-- PROFILE -->
             <li class="px-3 pt-2 pb-1 text-muted small">Account</li>
 
             @if($user->role === 'admin')
                 <li>
-                    <a class="dropdown-item d-flex align-items-center" href="#">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.update-profile-admin') }}" wire:navigate>
                         <i class="bi bi-person-gear me-2"></i> Profile Admin
                     </a>
                 </li>
             @elseif($user->role === 'guru')
                 <li>
-                    <a class="dropdown-item d-flex align-items-center" href="{{ route('guru.update-profile-guru') }}">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('guru.update-profile-guru') }}" wire:navigate>
                         <i class="bi bi-person-badge me-2"></i> Profile Guru
                     </a>
                 </li>
             @elseif($user->role === 'siswa')
                 <li>
-                    <a class="dropdown-item d-flex align-items-center" href="{{ route('siswa.update-profile') }}">
+                    <a class="dropdown-item d-flex align-items-center" href="{{ route('siswa.update-profile') }}" wire:navigate>
                         <i class="bi bi-person me-2"></i> Profile Siswa
                     </a>
                 </li>
@@ -100,5 +100,28 @@
         background-color: #f1f5ff !important;
         color: #0d6efd !important;
         border-radius: 6px;
+    }
+
+    /* Positioning dropdown menu */
+    #profileDropdownMenu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        z-index: 1000;
+        display: none;
+        min-width: 10rem;
+        padding: 0.5rem 0;
+        margin: 0.125rem 0 0;
+        font-size: 1rem;
+        color: #212529;
+        text-align: left;
+        list-style: none;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0,0,0,.15);
+    }
+
+    #profileDropdownMenu.show {
+        display: block;
     }
 </style>
