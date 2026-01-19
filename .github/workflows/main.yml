@@ -9,8 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup PHP 8.4
         uses: shivammathur/setup-php@v2
@@ -19,20 +18,32 @@ jobs:
           tools: composer:v2
 
       - name: Install dependencies
-        run: |
-          composer clear-cache
-          composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
+        run: composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction
 
-      - name: Deploy to cPanel via FTP
+      - name: Prepare Laravel folders
+        run: |
+          mkdir -p storage/framework/{cache,sessions,views}
+          chmod -R 775 storage bootstrap/cache || true
+
+      - name: Deploy to cPanel via FTP (stable mode)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          server: ftp.jerryyss.my.id
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+
           protocol: ftp
           port: 21
-          server-dir: /laravel_app/
-          timeout: 600000
+
+          passive: true
+          security: loose
+          dangerous-clean-slate: false
+
+          timeout: 60000
+          log-level: minimal
+
+          server-dir: /public_html/laravel_app/
+
           exclude: |
             **/.git*
             **/.github/**
