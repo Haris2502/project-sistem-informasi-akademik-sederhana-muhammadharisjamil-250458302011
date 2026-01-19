@@ -28,7 +28,7 @@ jobs:
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: 103.xxx.xxx.xxx   # <-- GANTI DENGAN IP HOSTING
+          server: 151.243.222.70
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           protocol: ftp
