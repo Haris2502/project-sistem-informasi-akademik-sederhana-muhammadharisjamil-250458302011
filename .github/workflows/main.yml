@@ -1,4 +1,4 @@
-name: Deploy Laravel to cPanel via FTP (Stable)
+name: Deploy Laravel to cPanel via FTP
 
 on:
   push:
@@ -25,25 +25,19 @@ jobs:
           mkdir -p storage/framework/{cache,sessions,views}
           chmod -R 775 storage bootstrap/cache || true
 
-      - name: Deploy to cPanel via FTP (stable mode)
+      - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ftp.jerryyss.my.id
+          server: 103.xxx.xxx.xxx   # <-- GANTI DENGAN IP HOSTING
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-
           protocol: ftp
           port: 21
-
-          passive: true
+          server-dir: /public_html/laravel_app/
+          timeout: 60000
           security: loose
           dangerous-clean-slate: false
-
-          timeout: 60000
           log-level: minimal
-
-          server-dir: /public_html/laravel_app/
-
           exclude: |
             **/.git*
             **/.github/**
