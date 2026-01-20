@@ -33,5 +33,4 @@ jobs:
           exclude: |
             **/node_modules/**
             **/vendor/**
-            **/.env
             public_html/**
