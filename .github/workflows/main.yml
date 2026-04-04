@@ -1,4 +1,5 @@
 name: sias
+
 on:
   push:
     branches: [ main ]
@@ -10,19 +11,18 @@ jobs:
 
     steps:
     - name: 🚚 Get latest code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: 📂 Sync files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
-        server: 151.243.222.70
-        username: sias@jerryyss.my.id
-        password: 250207
+        server: ftp.jerryyss.my.id
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
         protocol: ftp
         port: 21
-        passive: true
         timeout: 60000
-        dangerous-clean-slate: false
+        server-dir: /domains/e-iot.jerryyss.my.id/public_html/
         exclude: |
           **/.git*
           **/.git*/**
