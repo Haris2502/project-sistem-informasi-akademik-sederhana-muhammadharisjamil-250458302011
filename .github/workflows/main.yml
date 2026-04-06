@@ -17,7 +17,7 @@ jobs:
         server: ftp.jerryyss.my.id
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        protocol: ftps
+        protocol: ftp
         port: 21
         security: loose
         local-dir: ./
