@@ -1,4 +1,4 @@
-name: e-commerce 
+name: e-commerce
 
 on:
   push:
@@ -6,14 +6,21 @@ on:
       - main
 
 jobs:
-  web-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: 📥 Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 📤 Deploy ke FTP Server
+      # 🔥 Buat file ZIP (hindari node_modules dll)
+      - name: 📦 Create ZIP
+        run: |
+          zip -r project.zip . \
+          -x "node_modules/*" ".git/*" ".github/*" ".env"
+
+      # 🚀 Upload ZIP ke server (lebih stabil)
+      - name: 🚀 Upload ZIP via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp.jerryyss.my.id
@@ -27,6 +34,12 @@ jobs:
           local-dir: ./
           server-dir: /domains/sias.jerryyss.my.id/public_html/
 
+          include: |
+            project.zip
+
+          log-level: verbose
+          timeout: 600000
+          dangerous-clean-slate: false
           log-level: verbose
           timeout: 600000
 
